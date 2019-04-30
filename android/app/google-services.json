@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "216035817067",
+    "firebase_url": "https://keuangan-7220d.firebaseio.com",
+    "project_id": "keuangan-7220d",
+    "storage_bucket": "keuangan-7220d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216035817067:android:ea69a852cee19529",
+        "android_client_info": {
+          "package_name": "com.example.keu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "216035817067-td3v6meukmenv5mekjkvpoadurfbj7qg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.keu",
+            "certificate_hash": "a280e90029c32ab4a303f94cd5f252d36edbf152"
+          }
+        },
+        {
+          "client_id": "216035817067-s9b2v7mde5er22rb81rvhoate833ogd6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1IYCxu2bs_7nKvZ2mx4o43Pp3HumwSBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "216035817067-s9b2v7mde5er22rb81rvhoate833ogd6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,9 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:keu/utils/draweritem.dart';
 
-import 'package:keu/screen/authentication/login_page.dart';
 import 'package:keu/data.dart' as data;
+
 import 'package:keu/controller/login_controller.dart';
+
+import 'package:keu/model/user_model.dart';
+
+import 'package:keu/screen/authentication/login_page.dart';
 import 'kelolakeuangan/kelola_keu_page.dart';
 import 'wishlist/wish_list_page.dart';
 import 'searchtoko/search_toko_page.dart';
@@ -26,6 +30,14 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedDrawerIndex = 0;
+  String level;
+  SharedPreferences prefs;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    LoginController(context).checkToken();
+  }
 
   _getDrawerItemWidget(int pos) {
     switch (pos) {
@@ -56,8 +68,7 @@ class _MainScreenState extends State<MainScreen> {
     Navigator.of(context).pop(); // close the drawer
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget bodyContent() {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
@@ -81,10 +92,9 @@ class _MainScreenState extends State<MainScreen> {
                 color: Colors.white,
               ),
               onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => LoginPage())));
+                LoginController(context).logout();
+                // Navigator.pushReplacement(context,
+                //     MaterialPageRoute(builder: ((context) => LoginPage())));
               },
             )
           ],
@@ -112,6 +122,29 @@ class _MainScreenState extends State<MainScreen> {
         ),
         body: _getDrawerItemWidget(_selectedDrawerIndex),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new FutureBuilder<User>(
+      future: LoginController(context).checkSession(),
+      builder: ((context, snapshot) {
+        // print(snapshot.data);
+        if (snapshot.hasData) {
+          
+          return bodyContent();
+        } else if (snapshot.hasError) {
+          // throw(snapshot.error);
+          return new Center(
+              child: Container(
+            height: 500.0,
+            child: Text("${snapshot.error}"),
+          ));
+        }
+
+        return new Center(child: CircularProgressIndicator());
+      }),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:keu/utils/uidata.dart';
 
 import 'package:keu/main.dart';
-import 'package:keu/model/apotek_model.dart';
+import 'package:keu/model/user_model.dart';
 import 'sign_up_page.dart';
 import 'package:keu/controller/login_controller.dart';
 
@@ -11,7 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  Apotek apotek = new Apotek();
+  User user = new User();
   Size deviceSize;
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                 maxLines: 1,
                 onChanged: (text) {
                   setState(() {
-                    this.apotek.username = text;
+                    this.user.email = text;
                   });
                 },
                 decoration: InputDecoration(
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                 maxLines: 1,
                 onChanged: (text) {
                   setState(() {
-                    this.apotek.password = text;
+                    this.user.password = text;
                   });
                 },
                 obscureText: true,
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         color: Colors.blue,
                         onPressed: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: ((context) => SignUpPage())));
@@ -134,10 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         color: Colors.green,
                         onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: ((context) => MyApp())));
+                          LoginController(context).sendData(user);
                         },
                       ),
                     )

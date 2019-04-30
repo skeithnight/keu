@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:keu/utils/uidata.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:keu/utils/changeDate.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:keu/model/apotek_model.dart';
+import 'package:keu/model/user_model.dart';
 import 'package:keu/controller/register_controller.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -12,15 +13,41 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  Apotek apotek = new Apotek();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  User user = new User();
   Size deviceSize;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: registerBody(context),
-      ),
+    return new FutureBuilder<String>(
+      future: _firebaseMessaging.getToken(),
+      builder: ((context, snapshot) {
+        this.user.fcmtoken =snapshot.data;
+        if (snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(
+              child: registerBody(context),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          // throw(snapshot.error);
+          return new Center(
+              child: Container(
+            height: 500.0,
+            child: Text("${snapshot.error}"),
+          ));
+        }
+
+        return new Center(child: CircularProgressIndicator());
+      }),
     );
   }
 
@@ -73,12 +100,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 maxLines: 1,
                 onChanged: (text) {
                   setState(() {
-                    this.apotek.username = text;
+                    this.user.nama = text;
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: "Enter your username",
-                  labelText: "Username",
+                  hintText: "Enter your name",
+                  labelText: "Nama",
                 ),
               ),
             ),
@@ -88,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 maxLines: 1,
                 onChanged: (text) {
                   setState(() {
-                    this.apotek.username = text;
+                    this.user.email = text;
                   });
                 },
                 decoration: InputDecoration(
@@ -103,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 maxLines: 1,
                 onChanged: (text) {
                   setState(() {
-                    this.apotek.password = text;
+                    this.user.password = text;
                   });
                 },
                 obscureText: true,
@@ -128,8 +155,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 color: Colors.blue,
                 onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: ((context) => SignUpPage())));
+                  RegisterController(context).sendData(user);
+                  // Navigator.pushReplacement(context,
+                  //     MaterialPageRoute(builder: ((context) => SignUpPage())));
                 },
               ),
             ),

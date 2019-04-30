@@ -1,12 +1,12 @@
 import 'service_model.dart';
-import 'apotek_model.dart';
+import 'user_model.dart';
 import 'customer_model.dart';
 import 'detail_transaksi_model.dart';
 
 class Order {
   String id;
   Customer customer;
-  Apotek apotek;
+  User user;
   String address;
   double latitude;
   double longitude;
@@ -24,9 +24,9 @@ class Order {
         customer = snapshot["customer"] == null
             ? null
             : Customer.fromSnapshot(snapshot["customer"]),
-        apotek = snapshot["Apotek"] == null
+        user = snapshot["user"] == null
             ? null
-            : Apotek.fromSnapshot(snapshot["Apotek"]),
+            : User.fromSnapshot(snapshot["user"]),
         address = snapshot["address"],
         latitude = snapshot["latitude"],
         longitude = snapshot["longitude"],
@@ -39,7 +39,7 @@ class Order {
       {
         "id": id,
         "customer": {"id": customer.id},
-        "Apotek": {"id": apotek.id},
+        "user": {"id": user.id},
         "address": address,
         "latitude": latitude,
         "longitude": longitude,

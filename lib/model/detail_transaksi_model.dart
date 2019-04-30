@@ -1,5 +1,5 @@
 import 'service_model.dart';
-import 'apotek_model.dart';
+import 'user_model.dart';
 import 'customer_model.dart';
 
 class DetailTransaksi {

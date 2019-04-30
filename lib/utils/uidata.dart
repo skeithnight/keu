@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class UIData {
   // icon
-  static const String uriIcon = "https://pngimage.net/wp-content/uploads/2018/05/apotek-icon-png-8.png";
+  static const String uriIcon = "https://pngimage.net/wp-content/uploads/2018/05/user-icon-png-8.png";
 
   //routes
   static const String homeRoute = "/home";

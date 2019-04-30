@@ -25,7 +25,7 @@ class OrderController {
     };
     dio.options.baseUrl = data1.urlOrder;
 
-    var response = await dio.get('/apotek/${prefs.getString('idApotek')}');
+    var response = await dio.get('/user/${prefs.getString('idApotek')}');
     List<dynamic> map = response.data;
     // print(map[0]['groomings']);
     List<Order> listOrder = new List();
