@@ -91,6 +91,7 @@ class LoginController {
     // print(response.data);
     User user = User.fromSnapshot(response.data);
     prefs.setString("idUser", user.id);
+    prefs.setString("saldo", user.saldo.toString());
     prefs.commit();
     return user;
   }

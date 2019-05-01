@@ -29,7 +29,7 @@ class BarangController {
     };
     dio.options.baseUrl = data1.urlBarang;
 
-    var response = await dio.get('/search-tokped?query=${query}');
+    var response = await dio.get('/search-all?query=${query}');
     
     List<dynamic> map = response.data;
     List<Barang> listBarang = new List();
