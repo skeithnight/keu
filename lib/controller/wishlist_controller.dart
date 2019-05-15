@@ -24,13 +24,15 @@ class WishListController {
   }
 
   Future<List<WishList>> getDataWishList() async {
+    int endDate = new DateTime.now().millisecondsSinceEpoch;
     prefs = await SharedPreferences.getInstance();
     dio.options.headers = {
       "Authorization": "Bearer " + prefs.getString('token') ?? ''
     };
     dio.options.baseUrl = data1.urlBarang;
 
-    var response = await dio.get('');
+    var response = await dio
+        .get('');
 
     // print(response.data);
     List<dynamic> map = response.data;
@@ -53,16 +55,17 @@ class WishListController {
     };
     if (checkData() && checkData() != null) {
       // print(user.toJsonRegister());
-      var response =
-          await dio.post(data1.urlBarang, data: wishList.toJsonWishList());
-      if (response.statusCode == 200) {
-        // If server returns an OK response, parse the JSON
+      try {
+        var response =
+            await dio.post(data1.urlBarang, data: wishList.toJsonWishList());
+        if (response.statusCode == 200) {
+          // If server returns an OK response, parse the JSON
+          DialogWidget(context: context, dismiss: true)
+              .tampilDialog("Success", "Success to save data..", MainScreen());
+        }
+      } on DioError catch (e) {
         DialogWidget(context: context, dismiss: true)
-            .tampilDialog("Success", "Success to save data..", MainScreen());
-      } else {
-        // If that response was not OK, throw an error.
-        DialogWidget(context: context, dismiss: true)
-            .tampilDialog("Failed", "Server data error", () {});
+            .tampilDialog("Failed", e.message.toString(), () {});
       }
     } else {
       DialogWidget(context: context, dismiss: true)
@@ -75,15 +78,16 @@ class WishListController {
     dio.options.headers = {
       "Authorization": "Bearer " + prefs.getString('token') ?? ''
     };
-    var response = await dio.delete(data1.urlBarang + '/' + id);
-    if (response.statusCode == 200) {
-      // If server returns an OK response, parse the JSON
+    try {
+      var response = await dio.delete(data1.urlBarang + '/' + id);
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        DialogWidget(context: context, dismiss: true)
+            .tampilDialog("Success", "Success to save data..", MainScreen());
+      }
+    } on DioError catch (e) {
       DialogWidget(context: context, dismiss: true)
-          .tampilDialog("Success", "Success to save data..", MainScreen());
-    } else {
-      // If that response was not OK, throw an error.
-      DialogWidget(context: context, dismiss: true)
-          .tampilDialog("Failed", "Server data error", () {});
+          .tampilDialog("Failed", e.message.toString(), () {});
     }
   }
 

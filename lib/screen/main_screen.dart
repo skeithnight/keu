@@ -21,7 +21,7 @@ class MainScreen extends StatefulWidget {
     new DrawerItem("Kelola Keuangan", Icons.book),
     new DrawerItem("Wish List", Icons.shopping_basket),
     new DrawerItem("Cari di Toko Online", Icons.search),
-    new DrawerItem("Pengaturan", Icons.info)
+    // new DrawerItem("Pengaturan", Icons.info)
   ];
 
   static String tag = 'main-page';
@@ -127,24 +127,27 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new FutureBuilder<User>(
-      future: LoginController(context).checkSession(),
-      builder: ((context, snapshot) {
-        // print(snapshot.data);
-        if (snapshot.hasData) {
-          
-          return bodyContent();
-        } else if (snapshot.hasError) {
-          // throw(snapshot.error);
-          return new Center(
-              child: Container(
-            height: 500.0,
-            child: Text("${snapshot.error}"),
-          ));
-        }
+    return Scaffold(
+      body: new FutureBuilder<User>(
+        future: LoginController(context).checkSession(),
+        builder: ((context, snapshot) {
+          print(snapshot.data);
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              return bodyContent();
+            } else if (snapshot.hasError) {
+              // throw(snapshot.error);
+              return new Center(
+                  child: Container(
+                height: 500.0,
+                child: Text("${snapshot.error}"),
+              ));
+            }
+          }
 
-        return new Center(child: CircularProgressIndicator());
-      }),
+          return new Center(child: CircularProgressIndicator());
+        }),
+      ),
     );
   }
 }

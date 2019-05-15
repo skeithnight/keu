@@ -24,19 +24,24 @@ class BarangController {
   // Obat
   Future<List<Barang>> getDataBarang(String query) async {
     prefs = await SharedPreferences.getInstance();
+    List<Barang> listBarang = new List();
     dio.options.headers = {
       "Authorization": "Bearer " + prefs.getString('token') ?? ''
     };
     dio.options.baseUrl = data1.urlBarang;
-
-    var response = await dio.get('/search-all?query=${query}');
-    
-    List<dynamic> map = response.data;
-    List<Barang> listBarang = new List();
-    for (var i = 0; i < map.length; i++) {
-      listBarang.add(Barang.fromSnapshot(map[i]));
+    try {
+      var response = await dio.get('/search-all?query=${query}');
+      if (response.statusCode == 200) {
+        // If server returns an OK response, parse the JSON
+        List<dynamic> map = response.data;
+        for (var i = 0; i < map.length; i++) {
+          listBarang.add(Barang.fromSnapshot(map[i]));
+        }
+      }
+    } on DioError catch (e) {
+      DialogWidget(context: context, dismiss: true)
+          .tampilDialog("Failed", e.message.toString(), () {});
     }
-
     return listBarang;
   }
 }

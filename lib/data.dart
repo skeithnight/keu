@@ -7,8 +7,8 @@ var urlCheckSession = "$baseURL/user/check-session";
 List<String> listEnabled = ["True", "False"];
 
 
+// Transaksi
+var urlTransaksi = "$baseURL/transaksi";
+
 // Barang
 var urlBarang = "$baseURL/barang";
-
-// Order
-var urlOrder = "$baseURL/transaksi";

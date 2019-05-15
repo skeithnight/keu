@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:keu/utils/draweritem.dart';
@@ -9,6 +10,9 @@ import 'package:keu/model/wishlist_model.dart';
 import 'package:keu/model/barang_model.dart';
 
 import 'package:keu/controller/wishlist_controller.dart';
+import 'package:keu/controller/transaksi_controller.dart';
+
+import 'package:keu/model/status_model.dart';
 
 class WishListPage extends StatefulWidget {
   final DrawerItem drawerItem;
@@ -23,7 +27,21 @@ class WishListPage extends StatefulWidget {
 
 class FirstScreenState extends State<WishListPage> {
   TextEditingController _textFieldController = TextEditingController();
+  final formatCurrency = new NumberFormat.simpleCurrency(locale: 'IDR');
   bool isLoadingInput = false;
+  bool isLoadingHapus = false;
+  String startDate;
+  String endDate;
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      this.startDate = "2018-07-10 12:04:35";
+      this.endDate = DateTime.now().toString();
+    });
+  }
 
   Widget showDataRow(String right, int flR, String left, int flL) {
     return Row(
@@ -138,42 +156,51 @@ class FirstScreenState extends State<WishListPage> {
     );
   }
 
+  Widget statusKeuangan() {
+    return new FutureBuilder<Status>(
+      future: TransaksiController(context).getStatusKeu(startDate, endDate),
+      builder: ((context, snapshot) {
+        if (snapshot.hasData) {
+          return new Container(
+            height: 100,
+            width: double.infinity,
+            child: new Card(
+              color: Colors.redAccent,
+              child: Center(
+                child: Container(
+                      child: Text(formatCurrency.format(snapshot.data.saldo),
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 36.0)),
+                    ),
+              ),
+            ),
+            decoration: new BoxDecoration(boxShadow: [
+              new BoxShadow(
+                color: Colors.black,
+                blurRadius: 20.0,
+              ),
+            ]),
+          );
+        } else if (snapshot.hasError) {
+          return new Center(
+              child: Container(
+            height: 500.0,
+            child: Text("${snapshot.error}"),
+          ));
+        }
+
+        return new Center(child: CircularProgressIndicator());
+      }),
+    );
+  }
+
   Widget bodyContent() {
     return Column(
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: new FutureBuilder<SharedPreferences>(
-            future: SharedPreferences.getInstance(),
-            builder: ((context, snapshot) {
-              if (snapshot.hasData) {
-                return new Container(
-                  height: 100,
-                  child: new Card(
-                    child: Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: showDataRow("Tabungan", 1,
-                            snapshot.data.getString('saldo'), 3)),
-                  ),
-                  decoration: new BoxDecoration(boxShadow: [
-                    new BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 20.0,
-                    ),
-                  ]),
-                );
-              } else if (snapshot.hasError) {
-                return new Center(
-                    child: Container(
-                  height: 500.0,
-                  child: Text("${snapshot.error}"),
-                ));
-              }
-
-              return new Center(child: CircularProgressIndicator());
-            }),
-          ),
-        ),
+        statusKeuangan(),
         Expanded(
           flex: 8,
           child: new FutureBuilder<List<WishList>>(
@@ -290,13 +317,13 @@ class FirstScreenState extends State<WishListPage> {
             title: Text('Information'),
             content: Text('Apakah anda yakin akan menghapus data ini?'),
             actions: <Widget>[
-              isLoadingInput
+              isLoadingHapus
                   ? new Center(child: CircularProgressIndicator())
                   : new FlatButton(
                       child: new Text('Hapus'),
                       onPressed: () {
                         setState(() {
-                          this.isLoadingInput = true;
+                          this.isLoadingHapus = true;
                         });
                         WishListController(context).deleteDataWishList(id);
                       },
