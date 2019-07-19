@@ -15,33 +15,38 @@ class RegisterController {
   User user = new User();
   void sendData(User _user) async {
     user = _user;
-
-    if (checkData() && checkData() != null) {
-      // print(user.toJsonRegister());
-      var response =
-          await dio.post(data.urlRegister, data: user.toJsonRegister());
-      if (response.statusCode == 200) {
-        // If server returns an OK response, parse the JSON
-        DialogWidget(context: context, dismiss: true)
-            .tampilDialog("Success", "Success to save data..", LoginPage());
+    try {
+      if (checkData(user)) {
+        try {
+          // print(user.toJsonLogin());
+          var response =
+              await dio.post(data.urlRegister, data: user.toJsonRegister());
+          // If server returns an OK response, parse the JSON
+          DialogWidget(context: context, dismiss: true)
+              .tampilDialog("Success", "Sukses Daftar..", LoginPage());
+        } on DioError catch (e) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx and is also not 304.
+          DialogWidget(context: context, dismiss: false)
+              .tampilDialog("Failed", e.message, () {});
+        }
       } else {
-        // If that response was not OK, throw an error.
-      DialogWidget(context: context, dismiss: true)
-          .tampilDialog("Failed", "Server data error", (){});
+        DialogWidget(context: context, dismiss: false)
+            .tampilDialog("Failed", "The Data cannot empty!", () {});
       }
-    } else {
-      DialogWidget(context: context, dismiss: true)
-          .tampilDialog("Failed", "The Data cannot empty!", (){});
+    } catch (e) {
+      DialogWidget(context: context, dismiss: false)
+          .tampilDialog("Failed", e.message, () {});
     }
   }
 
-  bool checkData() {
+  bool checkData(User _user) {
     bool result = false;
-    if (user != null) {
-      if (user.email != null ||
-          user.nama != null ||
-          user.password != null ||
-          user.fcmtoken != null ) {
+    if (_user != null) {
+      if (_user.email != null &&
+          _user.nama != null &&
+          _user.password != null &&
+          _user.fcmtoken != null) {
         result = true;
       }
     }

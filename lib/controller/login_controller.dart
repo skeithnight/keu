@@ -29,8 +29,13 @@ class LoginController {
         } on DioError catch (e) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx and is also not 304.
-          DialogWidget(context: context, dismiss: false)
-              .tampilDialog("Failed", e.message, () {});
+          if (e.response.statusCode == 401) {
+            DialogWidget(context: context, dismiss: false)
+                .tampilDialog("Failed", "Email atau Password salah", () {});
+          } else {
+            DialogWidget(context: context, dismiss: false)
+                .tampilDialog("Failed", e.message, () {});
+          }
         }
       } else {
         DialogWidget(context: context, dismiss: false)
@@ -60,10 +65,11 @@ class LoginController {
     }
   }
 
-  Future<String> checkToken() async {
+  Future<User> checkToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    User user = new User();
     try {
-      checkSession();
+      user = await checkSession();
       if (prefs.getString('token') == null) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: ((context) => LoginPage())));
@@ -72,7 +78,7 @@ class LoginController {
       DialogWidget(context: context, dismiss: false)
           .tampilDialog("Failed", "The Data cannot empty!", () {});
     }
-    return prefs.getString('token');
+    return user;
   }
 
   Future<User> checkSession() async {

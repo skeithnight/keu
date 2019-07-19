@@ -74,7 +74,7 @@ class FirstScreenState extends State<SearchToko> {
         decoration: InputDecoration(
             labelText: "Search",
             hintText: "Cari Sesuatu",
-            prefixIcon: Icon(Icons.search),
+            suffixIcon: Icon(Icons.search),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)))),
       ),
@@ -115,24 +115,44 @@ class FirstScreenState extends State<SearchToko> {
               padding: EdgeInsets.all(10.0),
               child: new Wrap(
                 children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(barang.gambar[0]),
+                  new Container(
+                    alignment: Alignment.center,
+                    child: new Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 5.0),
+                      child: new Image.network(
+                        barang.gambar[0],
+                        fit: BoxFit.contain,
+                        height: 150.0,
+                        width: 150.0,
                       ),
                     ),
                   ),
+                  // Container(
+                  //   width: MediaQuery.of(context).size.width,
+                  //   height: MediaQuery.of(context).size.height,
+                  //   decoration: BoxDecoration(
+                  //     image: DecorationImage(
+                  //       fit: BoxFit.fill,
+                  //       image: NetworkImage(barang.gambar[0]),
+                  //     ),
+                  //   ),
+                  // ),
                   Text(
                     barang.judul,
                     style: new TextStyle(
                         fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                  showDataRow("Harga", 1, barang.harga.toString(), 3),
-                  showDataRow("Stok", 1, barang.stok.toString(), 3),
-                  showDataRow("E-Commerce", 1, barang.ecommerce, 3),
+                  new Container(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          showDataRow("Harga", 1, barang.harga.toString(), 3),
+                          showDataRow("Stok", 1, barang.stok.toString(), 3),
+                          showDataRow("E-Commerce", 1, barang.ecommerce, 3),
+                        ],
+                      ),
+                    ),
+                  ),
                   new Center(
                     child: new RaisedButton(
                       onPressed: () {

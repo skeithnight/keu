@@ -131,7 +131,7 @@ class TransaksiController {
         if (response.statusCode == 200) {
           // If server returns an OK response, parse the JSON
           DialogWidget(context: context, dismiss: true)
-              .tampilDialog("Success", "Success to save data..", MainScreen());
+              .tampilDialog("Success", "Success to edit data..", MainScreen());
         }
       } on DioError catch (e) {
         DialogWidget(context: context, dismiss: true)
@@ -158,7 +158,7 @@ class TransaksiController {
         if (response.statusCode == 200) {
           // If server returns an OK response, parse the JSON
           DialogWidget(context: context, dismiss: true)
-              .tampilDialog("Success", "Success to save data..", MainScreen());
+              .tampilDialog("Success", "Success to delete data..", MainScreen());
         }
       } on DioError catch (e) {
         DialogWidget(context: context, dismiss: true)
@@ -173,9 +173,9 @@ class TransaksiController {
   bool checkData() {
     bool result = false;
     if (transaksi != null) {
-      if (transaksi.status != null ||
-          transaksi.keterangan != null ||
-          transaksi.jumlah != null ||
+      if (transaksi.status != null &&
+          transaksi.keterangan != null &&
+          transaksi.jumlah != null &&
           transaksi.tanggal != null) {
         result = true;
       }

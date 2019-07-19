@@ -31,8 +31,7 @@ class WishListController {
     };
     dio.options.baseUrl = data1.urlBarang;
 
-    var response = await dio
-        .get('');
+    var response = await dio.get('');
 
     // print(response.data);
     List<dynamic> map = response.data;
@@ -83,7 +82,7 @@ class WishListController {
       if (response.statusCode == 200) {
         // If server returns an OK response, parse the JSON
         DialogWidget(context: context, dismiss: true)
-            .tampilDialog("Success", "Success to save data..", MainScreen());
+            .tampilDialog("Success", "Success to delete data..", MainScreen());
       }
     } on DioError catch (e) {
       DialogWidget(context: context, dismiss: true)
@@ -94,8 +93,8 @@ class WishListController {
   bool checkData() {
     bool result = false;
     if (wishList != null) {
-      if (wishList.nama != null ||
-          wishList.cariRekomendasi != null ||
+      if (wishList.nama != null &&
+          wishList.cariRekomendasi != null &&
           wishList.kategori != null) {
         result = true;
       }

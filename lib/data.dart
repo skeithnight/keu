@@ -1,5 +1,5 @@
 var appName = "Keuangan 1";
-var baseURL = "http://35.188.204.202:8080";
+var baseURL = "http://35.188.43.229:8080";
 // Authentication
 var urlRegister = "$baseURL/user/register";
 var urlLogin = "$baseURL/user/login";

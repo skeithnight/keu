@@ -15,13 +15,14 @@ import 'kelolakeuangan/kelola_keu_page.dart';
 import 'wishlist/wish_list_page.dart';
 import 'searchtoko/search_toko_page.dart';
 import 'pengaturan/pengaturan_page.dart';
+import 'barang/barang_page.dart';
 
 class MainScreen extends StatefulWidget {
   final drawerItems = [
     new DrawerItem("Kelola Keuangan", Icons.book),
+    new DrawerItem("Kelola Barang", Icons.shopping_cart),
     new DrawerItem("Wish List", Icons.shopping_basket),
     new DrawerItem("Cari di Toko Online", Icons.search),
-    // new DrawerItem("Pengaturan", Icons.info)
   ];
 
   static String tag = 'main-page';
@@ -32,11 +33,16 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedDrawerIndex = 0;
   String level;
   SharedPreferences prefs;
+  User user;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    LoginController(context).checkToken();
+    checksession();
+  }
+
+  void checksession() async {
+    user = await LoginController(context).checkToken();
   }
 
   _getDrawerItemWidget(int pos) {
@@ -46,14 +52,18 @@ class _MainScreenState extends State<MainScreen> {
           drawerItem: widget.drawerItems[_selectedDrawerIndex],
         );
       case 1:
-        return new WishListPage(
+        return new BarangPage(
           drawerItem: widget.drawerItems[_selectedDrawerIndex],
         );
       case 2:
-        return new SearchToko(
+        return new WishListPage(
           drawerItem: widget.drawerItems[_selectedDrawerIndex],
         );
       case 3:
+        return new SearchToko(
+          drawerItem: widget.drawerItems[_selectedDrawerIndex],
+        );
+      case 4:
         return new PengaturanPage(
           drawerItem: widget.drawerItems[_selectedDrawerIndex],
         );
@@ -103,15 +113,17 @@ class _MainScreenState extends State<MainScreen> {
           child: new Column(
             children: <Widget>[
               new UserAccountsDrawerHeader(
-                accountName: Text("Username"),
-                accountEmail: Text("email"),
+                accountName:
+                    user.nama != null ? Text(user.nama) : Text("-----"),
+                accountEmail:
+                    user.email != null ? Text(user.email) : Text("-----"),
                 currentAccountPicture: CircleAvatar(
                   backgroundColor:
                       Theme.of(context).platform == TargetPlatform.iOS
                           ? Colors.blue
                           : Colors.white,
                   child: Text(
-                    "U",
+                    user.email.substring(0, 1).toUpperCase(),
                     style: TextStyle(fontSize: 40.0),
                   ),
                 ),
