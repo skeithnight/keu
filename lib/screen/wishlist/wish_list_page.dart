@@ -200,7 +200,7 @@ class FirstScreenState extends State<WishListPage> {
   Widget bodyContent() {
     return Column(
       children: <Widget>[
-        statusKeuangan(),
+        // statusKeuangan(),
         Expanded(
           flex: 8,
           child: new FutureBuilder<List<WishList>>(
@@ -280,7 +280,7 @@ class FirstScreenState extends State<WishListPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Add Wish List'),
+            title: Text('Tambah Wishlist'),
             content: TextField(
               controller: _textFieldController,
               decoration: InputDecoration(hintText: "Nama Barang"),

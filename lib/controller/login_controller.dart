@@ -75,8 +75,9 @@ class LoginController {
             context, MaterialPageRoute(builder: ((context) => LoginPage())));
       }
     } catch (e) {
-      DialogWidget(context: context, dismiss: false)
-          .tampilDialog("Failed", "The Data cannot empty!", () {});
+      print(e.message);
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: ((context) => LoginPage())));
     }
     return user;
   }

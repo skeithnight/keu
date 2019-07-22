@@ -112,22 +112,22 @@ class _MainScreenState extends State<MainScreen> {
         drawer: new Drawer(
           child: new Column(
             children: <Widget>[
-              new UserAccountsDrawerHeader(
-                accountName:
-                    user.nama != null ? Text(user.nama) : Text("-----"),
-                accountEmail:
-                    user.email != null ? Text(user.email) : Text("-----"),
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor:
-                      Theme.of(context).platform == TargetPlatform.iOS
-                          ? Colors.blue
-                          : Colors.white,
-                  child: Text(
-                    user.email.substring(0, 1).toUpperCase(),
-                    style: TextStyle(fontSize: 40.0),
-                  ),
-                ),
-              ),
+              // new UserAccountsDrawerHeader(
+              //   // accountName:
+              //   //     user.nama != null ? Text("ada") : Text("-----"),
+              //   // accountEmail:
+              //   //     user.email != null ? Text(user.email) : Text("-----"),
+              //   currentAccountPicture: CircleAvatar(
+              //     backgroundColor:
+              //         Theme.of(context).platform == TargetPlatform.iOS
+              //             ? Colors.blue
+              //             : Colors.white,
+              //     child: Text(
+              //       user.email.substring(0, 1).toUpperCase(),
+              //       style: TextStyle(fontSize: 40.0),
+              //     ),
+              //   ),
+              // ),
               new Column(children: drawerOptions)
             ],
           ),

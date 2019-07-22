@@ -175,93 +175,25 @@ class FirstScreenState extends State<KelolaKeuPage>
             width: double.infinity,
             child: new Card(
               color: Colors.redAccent,
-              child: Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      child: Text(formatCurrency.format(snapshot.data.saldo),
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 36.0)),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                "Pokok",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 16.0),
-                              ),
-                              Text(
-                                formatCurrency.format(snapshot.data.k1),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20.0),
-                              )
-                            ],
+              child: Stack(
+                children: <Widget>[
+                  cardKeuangan(snapshot),
+                  new Positioned(
+                    child: new Align(
+                        alignment: FractionalOffset.topRight,
+                        child: RaisedButton(
+                          color: Colors.white,
+                          child: Icon(
+                            Icons.info_outline,
+                            color: Colors.blue,
                           ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                "Hiburan",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 16.0),
-                              ),
-                              Text(
-                                formatCurrency.format(snapshot.data.k2),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20.0),
-                              )
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                "Tabungan",
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 16.0),
-                              ),
-                              Text(
-                                formatCurrency.format(snapshot.data.k3),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 20.0),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
+                          shape: new CircleBorder(),
+                          onPressed: () {
+                            _displayInformationDialog(context, snapshot);
+                          },
+                        )),
+                  ),
+                ],
               ),
             ),
             decoration: new BoxDecoration(boxShadow: [
@@ -283,6 +215,88 @@ class FirstScreenState extends State<KelolaKeuPage>
       }),
     );
   }
+
+  Widget cardKeuangan(snapshot) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Text(formatCurrency.format(snapshot.data.saldo),
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 36.0)),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: snapshot.data.k1 < ((snapshot.data.saldo * 50) / 100)
+                    ? new GestureDetector(
+                        onTap: () => _displayAlertDialog(context,
+                            "Kebutuhan pokok tidak boleh kurang dari 50%"),
+                        child: cardStatusKeu("Pokok", snapshot.data.k1,
+                            Colors.yellow[700].value),
+                      )
+                    : cardStatusKeu(
+                        "Pokok", snapshot.data.k1, Colors.redAccent.value),
+              ),
+              Expanded(
+                flex: 1,
+                child: snapshot.data.k2 < ((snapshot.data.saldo * 30) / 100)
+                    ? new GestureDetector(
+                        onTap: () => _displayAlertDialog(context,
+                            "Kebutuhan hiburan tidak boleh kurang dari 30%"),
+                        child: cardStatusKeu(
+                        "Hiburan", snapshot.data.k2, Colors.yellow[700].value),
+                      )
+                    : cardStatusKeu(
+                        "Hiburan", snapshot.data.k2, Colors.redAccent.value),
+              ),
+              Expanded(
+                flex: 1,
+                child: snapshot.data.k3 < ((snapshot.data.saldo * 20) / 100)
+                    ? new GestureDetector(
+                        onTap: () => _displayAlertDialog(context,
+                            "tabungan disarankan 20%"),
+                        child: cardStatusKeu(
+                        "Tabungan", snapshot.data.k3, Colors.yellow[700].value),
+                      )
+                    : cardStatusKeu(
+                        "Hiburan", snapshot.data.k3, Colors.redAccent.value),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget cardStatusKeu(String title, data, int color) => Card(
+        color: Color(color),
+        child: Column(
+          children: <Widget>[
+            Text(
+              title,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w300,
+                  fontSize: 16.0),
+            ),
+            Text(
+              formatCurrency.format(data),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20.0),
+            )
+          ],
+        ),
+      );
 
   Widget listTransaksi() {
     return Expanded(
@@ -318,13 +332,120 @@ class FirstScreenState extends State<KelolaKeuPage>
     );
   }
 
+  _displayInformationDialog(BuildContext context, snapshot) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text('Rekomendasi'),
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(3.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            "Pokok",
+                            style: const TextStyle(
+                                // color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16.0),
+                          ),
+                          Text(
+                            formatCurrency
+                                .format((snapshot.data.saldo * 50) / 100),
+                            style: const TextStyle(
+                                // color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.0),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            "Hiburan",
+                            style: const TextStyle(
+                                // color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16.0),
+                          ),
+                          Text(
+                            formatCurrency
+                                .format((snapshot.data.saldo * 30) / 100),
+                            style: const TextStyle(
+                                // color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.0),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            "Tabungan",
+                            style: const TextStyle(
+                                // color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16.0),
+                          ),
+                          Text(
+                            formatCurrency
+                                .format((snapshot.data.saldo * 20) / 100),
+                            style: const TextStyle(
+                                // color: Colors.white,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.0),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  _displayAlertDialog(BuildContext context, String message) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text('Peringatan'),
+            children: <Widget>[
+              Padding(padding: EdgeInsets.all(10.0), child: Text(message))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
       length: 3,
       child: Scaffold(
         body: Column(
-          children: <Widget>[statusKeuangan(), listTransaksi()],
+          children: <Widget>[
+            statusKeuangan(),
+            listTransaksi(),
+          ],
         ),
         floatingActionButton: floatingAB(),
       ),

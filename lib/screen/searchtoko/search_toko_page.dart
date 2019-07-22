@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:keu/utils/draweritem.dart';
 
 import 'package:keu/model/barang_model.dart';
+import 'package:keu/model/ongkir_model.dart';
+
 import 'package:keu/controller/barang_controller.dart';
 
 class SearchToko extends StatefulWidget {
@@ -21,6 +24,7 @@ class SearchToko extends StatefulWidget {
 
 class FirstScreenState extends State<SearchToko> {
   TextEditingController editingController = TextEditingController();
+  final formatCurrency = new NumberFormat.simpleCurrency(locale: 'IDR');
 
   List<Barang> data = new List<Barang>();
 
@@ -149,6 +153,15 @@ class FirstScreenState extends State<SearchToko> {
                           showDataRow("Harga", 1, barang.harga.toString(), 3),
                           showDataRow("Stok", 1, barang.stok.toString(), 3),
                           showDataRow("E-Commerce", 1, barang.ecommerce, 3),
+                          new Center(
+                            child: new RaisedButton(
+                              onPressed: () {
+                                // print("WOOOI" +barang.ongkir[0].nama);
+                                _displayOngkirDialog(context, barang.ongkir);
+                              },
+                              child: new Text('Cek Ongkir'),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -175,6 +188,38 @@ class FirstScreenState extends State<SearchToko> {
       throw 'Could not launch $url';
     }
   }
+
+  _displayOngkirDialog(BuildContext context, List<Ongkir> data) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Ongkos Kirim'),
+            content: Container(
+              width: double.maxFinite,
+              height: 300.0,
+              child: ListView(
+                padding: EdgeInsets.all(3.0),
+                //map List of our data to the ListView
+                children: data.map((data) => cardListOngkir(data)).toList(),
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget cardListOngkir(Ongkir data) => new Container(
+        child: new Card(
+          child: showDataRow(
+              "JNE, " + data.nama, 2, formatCurrency.format(data.biaya), 1),
+        ),
+        decoration: new BoxDecoration(boxShadow: [
+          new BoxShadow(
+            color: Colors.black,
+            blurRadius: 20.0,
+          ),
+        ]),
+      );
 
   void filterSearchResults(String query) async {
     if (query.isNotEmpty) {

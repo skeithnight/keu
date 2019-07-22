@@ -12,3 +12,5 @@ var urlTransaksi = "$baseURL/transaksi";
 
 // Barang
 var urlBarang = "$baseURL/barang";
+var kebPokok = "Kebutuhan_Pokok";
+var kebHiburan = "Kebutuhan_Hiburan";

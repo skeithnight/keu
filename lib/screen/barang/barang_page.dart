@@ -3,16 +3,22 @@ import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:easy_dialogs/easy_dialogs.dart';
 
 import 'package:keu/utils/draweritem.dart';
 
 import 'package:keu/model/wishlist_model.dart';
 import 'package:keu/model/barang_model.dart';
+import 'package:keu/model/status_model.dart';
+import 'package:keu/model/transaksi_model.dart';
 
 import 'package:keu/controller/wishlist_controller.dart';
+import 'package:keu/controller/barang_controller.dart';
 import 'package:keu/controller/transaksi_controller.dart';
 
-import 'package:keu/model/status_model.dart';
+import 'keb_pokok_page.dart';
+import 'keb_hiburan_page.dart';
+import 'detail_barang_keb_page.dart';
 
 class BarangPage extends StatefulWidget {
   final DrawerItem drawerItem;
@@ -30,13 +36,23 @@ class FirstScreenState extends State<BarangPage> {
   final formatCurrency = new NumberFormat.simpleCurrency(locale: 'IDR');
   bool isLoadingInput = false;
   bool isLoadingHapus = false;
+
   String startDate;
   String endDate;
+
+  WishList kebutuhan;
+  List<Transaksi> _daftarTrans;
+  String _selectedTransaksi;
+
+  List<String> _kategori = ['Kebutuhan_Pokok', 'Kebutuhan_Hiburan']; // Option 2
+  String _selectedKategori;
 
   @override
   void initState() {
     super.initState();
 
+    kebutuhan = new WishList();
+    // _selectedKategori = _kategori[0];
     setState(() {
       this.startDate = "2018-07-10 12:04:35";
       this.endDate = DateTime.now().toString();
@@ -168,13 +184,13 @@ class FirstScreenState extends State<BarangPage> {
               color: Colors.redAccent,
               child: Center(
                 child: Container(
-                      child: Text(formatCurrency.format(snapshot.data.saldo),
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 36.0)),
-                    ),
+                  child: Text(formatCurrency.format(snapshot.data.saldo),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 36.0)),
+                ),
               ),
             ),
             decoration: new BoxDecoration(boxShadow: [
@@ -222,6 +238,36 @@ class FirstScreenState extends State<BarangPage> {
           ),
         )
       ],
+    );
+  }
+
+  Widget listTransaksi() {
+    return Expanded(
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 50.0,
+            color: Colors.red,
+            child: TabBar(
+              tabs: [Text("Keb. Pokok"), Text("Keb. Hiburan")],
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                KebPokokPage(
+                  startDate: startDate,
+                  endDate: endDate,
+                ),
+                KebHiburanPage(
+                  startDate: startDate,
+                  endDate: endDate,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -280,10 +326,72 @@ class FirstScreenState extends State<BarangPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Add Wish List'),
-            content: TextField(
-              controller: _textFieldController,
-              decoration: InputDecoration(hintText: "Nama Barang"),
+            title: Text('Tambah Barang'),
+            content: new Container(
+              height: 150.0,
+              child: new Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  new Expanded(
+                    child: DropdownButton(
+                      hint: Text(
+                          '===== Pilih Kategori ====='), // Not necessary for Option 1
+                      value: _selectedKategori,
+                      onChanged: (String newValue) {
+                        _selectedKategori = newValue;
+                        print(newValue);
+                        // setState(() {
+                        //   _selectedKategori = newValue;
+                        //   // _transaksi.status = newValue;
+                        // });
+                      },
+                      items: _kategori.map((location) {
+                        return DropdownMenuItem(
+                          child: new Text(location),
+                          value: location,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  new Expanded(
+                    child: DropdownButton(
+                      hint: Text(
+                          '===== Pilih Transaksi ====='), // Not necessary for Option 1
+                      value: _selectedTransaksi,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedTransaksi = newValue;
+                          kebutuhan.transaksi[0] =
+                              Transaksi.fromString(newValue);
+                        });
+                      },
+                      items: _daftarTrans.map((item) {
+                        return DropdownMenuItem(
+                          child: new Text(item.id),
+                          value: item.id,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  // new Expanded(
+                  //   child: new RaisedButton(
+                  //     onPressed: _openRingtoneDialog,
+                  //     textColor: Colors.white,
+                  //     color: Colors.red,
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: new Text(
+                  //       "Pilih Transaksi",
+                  //     ),
+                  //   ),
+                  // ),
+                  new Expanded(
+                    child: TextField(
+                      controller: _textFieldController,
+                      decoration: InputDecoration(hintText: "Nama Barang"),
+                    ),
+                  ),
+                ],
+              ),
             ),
             actions: <Widget>[
               isLoadingInput
@@ -293,9 +401,9 @@ class FirstScreenState extends State<BarangPage> {
                       onPressed: () {
                         setState(() {
                           this.isLoadingInput = true;
+                          kebutuhan.nama = _textFieldController.text;
                         });
-                        WishListController(context)
-                            .inputDataWishList(_textFieldController.text);
+                        BarangController(context).inputDataKeb(kebutuhan);
                       },
                     ),
               new FlatButton(
@@ -341,13 +449,26 @@ class FirstScreenState extends State<BarangPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: bodyContent(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _displayDialog(context);
-        },
-        child: Icon(Icons.add),
+    return new DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        // body: bodyContent(),
+        body: Column(
+          children: <Widget>[
+            // statusKeuangan(),
+            listTransaksi(),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => DetailBarangKebPage())));
+            // _displayDialog(context);
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }

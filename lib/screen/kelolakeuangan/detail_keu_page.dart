@@ -22,9 +22,9 @@ class _DetailKeuPageState extends State<DetailKeuPage> {
   bool isLoadingEdit = false;
   bool isLoadingHapus = false;
 
-  List<String> _status = ['Pemasukan', 'Pengeluaran']; // Option 2
+  List<String> _status = ['Pemasukan', 'Pengeluaran']; // Option 1
   String _selectedStatus;
-  List<String> _kategori = ['Kebutuha_Pokok', 'Kebutuhan_Hiburan']; // Option 2
+  List<String> _kategori = ['Kebutuhan_Pokok', 'Kebutuhan_Hiburan']; // Option 2
   String _selectedKategori;
 
   DateTime selectedDate = DateTime.now();

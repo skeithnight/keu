@@ -21,6 +21,8 @@ class Transaksi {
         jumlah = snapshot["jumlah"],
         keterangan = snapshot["keterangan"];
 
+  Transaksi.fromString(String _id) : id = _id;
+
   Map<String, dynamic> toJson() => {
         "tanggal": tanggal,
         "keterangan": keterangan,
